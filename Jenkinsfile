@@ -37,7 +37,7 @@ pipeline {
             steps {
                 bat '''
                     if not exist reports mkdir reports
-                    %VENV%\\Scripts\\pytest.exe --junitxml=reports\\junit.xml --cov=app --cov-report=xml:reports\\coverage.xml
+                    %VENV%\\Scripts\\python.exe -m pytest --junitxml=reports\\junit.xml --cov=app --cov-report=xml:reports\\coverage.xml
                 '''
             }
         }
