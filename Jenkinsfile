@@ -3,8 +3,7 @@ pipeline {
 
     environment {
         VENV = ".venv"
-        PYLAUNCHER = "C:\\Users\\kamil.raczkowski\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe"
-        PYVER = "3"
+        PYTHON = "C:\\Users\\kamil.raczkowski\\AppData\\Local\\Programs\\Python\\Python314\\python.exe"
     }
 
     stages {
@@ -17,9 +16,9 @@ pipeline {
         stage('Diagnostics') {
             steps {
                 bat '''
-                    echo PYLAUNCHER=%PYLAUNCHER%
-                    "%PYLAUNCHER%" --version
-                    "%PYLAUNCHER%" -%PYVER% -c "import sys; print(sys.version); print(sys.executable)"
+                    echo PYTHON=%PYTHON%
+                    "%PYTHON%" --version
+                    "%PYTHON%" -c "import sys; print(sys.executable)"
                 '''
             }
         }
@@ -27,7 +26,7 @@ pipeline {
         stage('Setup venv') {
             steps {
                 bat '''
-                    "%PYLAUNCHER%" -%PYVER% -m venv %VENV%
+                    "%PYTHON%" -m venv %VENV%
                     %VENV%\\Scripts\\python.exe -m pip install --upgrade pip
                     %VENV%\\Scripts\\pip.exe install -r requirements.txt
                 '''
