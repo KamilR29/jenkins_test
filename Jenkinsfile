@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         VENV = ".venv"
+        PYTHON = "C:\\Users\\kamil.raczkowski\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
     }
 
     stages {
@@ -15,10 +16,9 @@ pipeline {
         stage('Setup venv') {
             steps {
                 bat '''
-                    py -m venv .venv
-                    call .venv\\Scripts\\activate
-                    python -m pip install --upgrade pip
-                    pip install -r requirements.txt
+                    "%PYTHON%" -m venv %VENV%
+                    %VENV%\\Scripts\\python.exe -m pip install --upgrade pip
+                    %VENV%\\Scripts\\pip.exe install -r requirements.txt
                 '''
             }
         }
@@ -26,8 +26,8 @@ pipeline {
         stage('Test') {
             steps {
                 bat '''
-                    call .venv\\Scripts\\activate
-                    pytest --junitxml=reports\\junit.xml --cov=app --cov-report=xml:reports\\coverage.xml
+                    if not exist reports mkdir reports
+                    %VENV%\\Scripts\\pytest.exe --junitxml=reports\\junit.xml --cov=app --cov-report=xml:reports\\coverage.xml
                 '''
             }
         }
@@ -35,7 +35,7 @@ pipeline {
 
     post {
         always {
-            junit 'reports/junit.xml'
+            junit testResults: 'reports/junit.xml', allowEmptyResults: true
             archiveArtifacts artifacts: 'reports/**', fingerprint: true
         }
     }
